@@ -158,24 +158,16 @@ class BaseGophrClient implements GophrClientInterface
 
       if ($status_code >= 200 && $status_code < 300) {
          $response = json_decode($response->getBody(), true);
-         if (isset($response["success"]) && boolval($response["success"])) {
-            if (isset($response["data"])) {
-               return $response["data"];
-            }
-            throw new Exception("Data node not set in server response");
+         if (isset($response["data"])) {
+            return $response["data"];
          }
-         if (isset($response["error"]) && boolval($response["error"])) {
-            $message = null;
-            if (isset($response["message"])) {
-               $message = $response["message"];
-            }
-            if (isset($response["data"])) {
-               $message = $message . json_encode($response["data"]);
-            }
-            throw new Exception($message);
+         throw new Exception("Data node not set in server response");
+      } else {
+         $response = json_decode($response->getBody(), true);
+         if (isset($response["errors"])) {
+            throw new Exception($response["errors"][0]["message"]);
          }
+         throw new Exception("Errors node not set in server response");
       }
-
-      throw new Exception("Error Processing Response");
    }
 }
