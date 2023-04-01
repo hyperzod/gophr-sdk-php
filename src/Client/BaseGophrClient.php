@@ -11,9 +11,9 @@ class BaseGophrClient implements GophrClientInterface
 {
 
    /** @var string default base URL for Gophr's API */
-   const DEV_API_BASE = 'https://www.gophr.dev/api';
+   const DEV_API_BASE = 'https://api-sandbox.gophr.com/v2-commercial-api';
 
-   const PRODUCTION_API_BASE = 'https://www.gophr.app/api';
+   const PRODUCTION_API_BASE = 'https://api.gophr.com/v2-commercial-api';
 
    /** @var array<string, mixed> */
    private $config;
@@ -87,9 +87,9 @@ class BaseGophrClient implements GophrClientInterface
    {
       $client = new Client([
          'headers' => [
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $this->getApiKey()
+            'accept' => 'application/json',
+            'content-type' => 'application/json',
+            'API-KEY' => $this->getApiKey()
          ]
       ]);
 
