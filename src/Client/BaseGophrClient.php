@@ -11,9 +11,9 @@ class BaseGophrClient implements GophrClientInterface
 {
 
    /** @var string default base URL for Gophr's API */
-   const DEV_API_BASE = 'https://www.gophr.dev/api';
+   const DEV_API_BASE = 'https://api-sandbox.gophr.com/v2-commercial-api';
 
-   const PRODUCTION_API_BASE = 'https://www.gophr.app/api';
+   const PRODUCTION_API_BASE = 'https://api.gophr.com/v2-commercial-api';
 
    /** @var array<string, mixed> */
    private $config;
@@ -87,9 +87,9 @@ class BaseGophrClient implements GophrClientInterface
    {
       $client = new Client([
          'headers' => [
-            'Content-Type' => 'application/json',
-            'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $this->getApiKey()
+            'accept' => 'application/json',
+            'content-type' => 'application/json',
+            'API-KEY' => $this->getApiKey()
          ]
       ]);
 
@@ -158,24 +158,16 @@ class BaseGophrClient implements GophrClientInterface
 
       if ($status_code >= 200 && $status_code < 300) {
          $response = json_decode($response->getBody(), true);
-         if (isset($response["success"]) && boolval($response["success"])) {
-            if (isset($response["data"])) {
-               return $response["data"];
-            }
-            throw new Exception("Data node not set in server response");
+         if (isset($response["data"])) {
+            return $response["data"];
          }
-         if (isset($response["error"]) && boolval($response["error"])) {
-            $message = null;
-            if (isset($response["message"])) {
-               $message = $response["message"];
-            }
-            if (isset($response["data"])) {
-               $message = $message . json_encode($response["data"]);
-            }
-            throw new Exception($message);
+         throw new Exception("Data node not set in server response");
+      } else {
+         $response = json_decode($response->getBody(), true);
+         if (isset($response["errors"])) {
+            throw new Exception($response["errors"][0]["message"]);
          }
+         throw new Exception("Errors node not set in server response");
       }
-
-      throw new Exception("Error Processing Response");
    }
 }

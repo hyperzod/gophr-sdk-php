@@ -4,14 +4,16 @@ namespace Hyperzod\GophrSdkPhp\Service;
 
 /**
  * Service factory class for API resources in the root namespace.
- *
+ * @property TaskService $taskService
  */
 class CoreServiceFactory extends AbstractServiceFactory
 {
     /**
      * @var array<string, string>
      */
-    private static $classMap = [];
+    private static $classMap = [
+        'task' => TaskService::class,
+    ];
 
     protected function getServiceClass($name)
     {
