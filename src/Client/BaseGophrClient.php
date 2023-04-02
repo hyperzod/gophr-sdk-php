@@ -164,6 +164,7 @@ class BaseGophrClient implements GophrClientInterface
          throw new Exception("Data node not set in server response");
       } else {
          $response = json_decode($response->getBody(), true);
+         dd($response);
          if (isset($response["errors"])) {
             throw new Exception($response["errors"][0]["message"]);
          }
