@@ -4,16 +4,10 @@ namespace Hyperzod\GophrSdkPhp\Client;
 
 use Exception;
 use GuzzleHttp\Client;
-use Hyperzod\GophrSdkPhp\Enums\EnvironmentEnum;
 use Hyperzod\GophrSdkPhp\Exception\InvalidArgumentException;
 
 class BaseGophrClient implements GophrClientInterface
 {
-
-   /** @var string default base URL for Gophr's API */
-   const DEV_API_BASE = 'https://api-sandbox.gophr.com/v2-commercial-api';
-
-   const PRODUCTION_API_BASE = 'https://api.gophr.com/v2-commercial-api';
 
    /** @var array<string, mixed> */
    private $config;
@@ -23,24 +17,15 @@ class BaseGophrClient implements GophrClientInterface
     *
     * The constructor takes two arguments.
     * @param string $api_key the API key of the client
-    * @param string $env the environment
+    * @param string $api_base the base URL for Gophr's API
     */
 
-   public function __construct($api_key, $env)
+   public function __construct($api_key, $api_base)
    {
       $config = $this->validateConfig(array(
          "api_key" => $api_key,
-         "env" => $env
+         "api_base" => $api_base
       ));
-
-      //Set the base URL
-      if ($config['env'] == EnvironmentEnum::DEV) {
-         $config['api_base'] = self::DEV_API_BASE;
-      }
-
-      if ($config['env'] == EnvironmentEnum::PRODUCTION) {
-         $config['api_base'] = self::PRODUCTION_API_BASE;
-      }
 
       $this->config = $config;
    }
@@ -63,16 +48,6 @@ class BaseGophrClient implements GophrClientInterface
    public function getApiBase()
    {
       return $this->config['api_base'];
-   }
-
-   /**
-    * Gets the env.
-    *
-    * @return string the env
-    */
-   public function getEnv()
-   {
-      return $this->config['env'];
    }
 
    /**
@@ -127,28 +102,21 @@ class BaseGophrClient implements GophrClientInterface
          throw new InvalidArgumentException('api_key cannot contain whitespace');
       }
 
-      // env
-      $all_envs = array_values((new EnvironmentEnum())->getConstants());
-
-      if (!isset($config['env'])) {
-         throw new InvalidArgumentException('env field is required');
+      if (!isset($config['api_base'])) {
+         throw new InvalidArgumentException('api_base field is required');
       }
 
-      if (!is_string($config['env'])) {
-         throw new InvalidArgumentException('env must be a string');
+      if (!is_string($config['api_base'])) {
+         throw new InvalidArgumentException('api_base must be a string');
       }
 
-      if ('' === $config['env']) {
-         throw new InvalidArgumentException('env cannot be an empty string');
-      }
-
-      if (!in_array($config['env'], $all_envs)) {
-         throw new InvalidArgumentException('Invalid env');
+      if ('' === $config['api_base']) {
+         throw new InvalidArgumentException('api_base cannot be an empty string');
       }
 
       return [
          "api_key" => $config['api_key'],
-         "env" => $config['env'],
+         "api_base" => $config['api_base'],
       ];
    }
 
