@@ -4,10 +4,10 @@ namespace Hyperzod\GophrSdkPhp\Service;
 
 use Hyperzod\GophrSdkPhp\Enums\HttpMethodEnum;
 
-class TaskService extends AbstractService
+class JobService extends AbstractService
 {
    /**
-    * Create a task on gophr
+    * Create a job on gophr
     *
     * @param array $params
     *
